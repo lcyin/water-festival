@@ -1,0 +1,166 @@
+Below, I’ve broken down the previously categorized high-level user stories into smaller, actionable tasks for developers. Each task is assigned a story point based on your provided measurement scale:
+	•	1: Less than an hour
+	•	3: A few hours
+	•	5: 1 day
+	•	8: A few days
+	•	13+: Longer (e.g., a week or more, though I’ll keep tasks small enough to avoid this where possible).
+The breakdown ensures tasks are granular, independent (where feasible), and estimable, aligning with SCRUM principles. I’ve estimated points based on typical effort for a developer familiar with Node.js, React, PostgreSQL, and deployment tools like Heroku.
+
+Backend (BE) Tasks
+1. As an attendee, I want to be notified if my selected tickets are unavailable, so that I can adjust my purchase before proceeding.
+	•	Task 1.1: Create a database query to check ticket availability (Normal: 150, VIP: 50).
+	◦	Effort: Write a simple SQL query and test it.
+	◦	Story Points: 3 (few hours)
+	•	Task 1.2: Add logic in the purchase API to return an error if tickets are unavailable.
+	◦	Effort: Update the /api/purchase endpoint with a conditional check.
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 6
+2. As an attendee, I want to pay for my tickets using a credit or debit card without creating an account, so that I can complete my purchase quickly and easily.
+	•	Task 2.1: Set up Stripe SDK in Node.js and configure with API keys.
+	◦	Effort: Install package, add env variables, test sandbox payment.
+	◦	Story Points: 3 (few hours)
+	•	Task 2.2: Create a POST /api/purchase endpoint to process Stripe payments.
+	◦	Effort: Handle payment intent creation and confirmation.
+	◦	Story Points: 5 (1 day)
+	•	Task 2.3: Save order details to Postgres after successful payment.
+	◦	Effort: Insert into orders and tickets tables with transaction.
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 11
+3. As an attendee, I want to receive an email with a PDF ticket containing a unique QR code after payment, so that I can present it for entry at the festival.
+	•	Task 3.1: Generate a unique QR code string for each ticket.
+	◦	Effort: Use a library or custom logic (e.g., ticket-${orderId}-${timestamp}).
+	◦	Story Points: 1 (less than an hour)
+	•	Task 3.2: Create a PDF ticket with festival details and QR code using PDFKit.
+	◦	Effort: Design a simple layout and test PDF generation.
+	◦	Story Points: 5 (1 day)
+	•	Task 3.3: Set up Nodemailer with SendGrid to send emails.
+	◦	Effort: Configure SMTP, test email delivery.
+	◦	Story Points: 3 (few hours)
+	•	Task 3.4: Integrate email sending into the purchase flow with PDF attachment.
+	◦	Effort: Add to /api/purchase after payment success.
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 12
+4. As an organizer, I want the system to automatically stop selling a ticket type when its limit is reached, so that I don’t oversell the event.
+	•	Task 4.1: Implement a database transaction to enforce ticket limits.
+	◦	Effort: Use Postgres transactions to check and update counts atomically.
+	◦	Story Points: 5 (1 day)
+	•	Task 4.2: Test overselling prevention with concurrent requests.
+	◦	Effort: Simulate multiple purchases to ensure limits hold.
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 8
+5. As an organizer, I want to export sales data as a CSV file, so that I can analyze or share it for financial reporting.
+	•	Task 5.1: Write a query to fetch all order data from Postgres.
+	◦	Effort: Simple SELECT statement with joins.
+	◦	Story Points: 1 (less than an hour)
+	•	Task 5.2: Create a GET /api/export endpoint to generate and serve a CSV.
+	◦	Effort: Use a library like csv-writer and stream response.
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 4
+
+Frontend (FE) Tasks
+6. As an attendee, I want to view the festival date, time, and location on the website, so that I can confirm the event details before purchasing a ticket.
+	•	Task 6.1: Add static festival details to the homepage in React.
+	◦	Effort: Hardcode text in a component.
+	◦	Story Points: 1 (less than an hour)
+	•	Task 6.2: Style the festival details section for readability.
+	◦	Effort: Apply CSS (e.g., font size, spacing).
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 4
+7. As an attendee, I want to select either a Normal or VIP ticket and specify a quantity, so that I can purchase the exact tickets I need for myself and others.
+	•	Task 7.1: Build a ticket selection form with dropdown and number input.
+	◦	Effort: Create a React component with state for type and quantity.
+	◦	Story Points: 3 (few hours)
+	•	Task 7.2: Fetch and display real-time ticket availability from the backend.
+	◦	Effort: Add an API call (e.g., GET /api/availability) and update UI.
+	◦	Story Points: 3 (few hours)
+	•	Task 7.3: Style the form for usability (e.g., labels, buttons).
+	◦	Effort: Apply CSS or a framework like Bootstrap.
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 9
+8. As an attendee, I want the website to work seamlessly on both my phone and computer, so that I can buy tickets from any device I’m using.
+	•	Task 8.1: Apply responsive CSS to the homepage and ticket form.
+	◦	Effort: Use media queries or a framework to adjust layouts.
+	◦	Story Points: 5 (1 day)
+	•	Task 8.2: Test responsiveness on mobile and desktop browsers.
+	◦	Effort: Manual testing across devices (e.g., Chrome, Safari).
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 8
+
+Infrastructure (Infra) Tasks
+9. As an organizer, I want the system to handle up to 200 users at once without crashing, so that ticket sales remain uninterrupted during peak demand.
+	•	Task 9.1: Configure Heroku dynos to support 200 concurrent users.
+	◦	Effort: Set up a Standard-1X dyno and test scaling.
+	◦	Story Points: 3 (few hours)
+	•	Task 9.2: Optimize Postgres connection pooling for concurrency.
+	◦	Effort: Adjust pool settings in Node.js (e.g., pg-pool).
+	◦	Story Points: 3 (few hours)
+	•	Task 9.3: Run a load test with 200 simulated users.
+	◦	Effort: Use a tool like k6 or Loader.io to verify performance.
+	◦	Story Points: 5 (1 day)
+	•	Total Points: 11
+10. As an organizer, I want to access a dashboard showing total tickets sold, remaining inventory, and revenue, so that I can monitor sales progress in real-time.
+	•	Task 10.1: Create a GET /api/admin/stats endpoint for sales data.
+	◦	Effort: Query Postgres for counts and revenue, return JSON.
+	◦	Story Points: 3 (few hours)
+	•	Task 10.2: Build a basic admin dashboard UI in React.
+	◦	Effort: Display stats in a simple table or cards (FE overlap).
+	◦	Story Points: 5 (1 day)
+	•	Task 10.3: Secure the dashboard with basic authentication.
+	◦	Effort: Add a hardcoded password or env-based key.
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 11
+
+Deployment Tasks
+11. As an organizer, I want the application deployed to a live server by July 1, 2025, so that attendees can start purchasing tickets one month before the event.
+	•	Task 11.1: Set up a Heroku app and link to GitHub repo.
+	◦	Effort: Create app, configure buildpacks.
+	◦	Story Points: 3 (few hours)
+	•	Task 11.2: Deploy the Node.js app and Postgres database to Heroku.
+	◦	Effort: Push code, add Postgres add-on, set env variables.
+	◦	Story Points: 5 (1 day)
+	•	Task 11.3: Purchase and configure a custom domain (e.g., summerwaterfest.com).
+	◦	Effort: Buy via a registrar, point DNS to Heroku.
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 11
+12. As an attendee, I want all interactions with the website to be secure, so that my payment and personal information are protected.
+	•	Task 12.1: Enable HTTPS on Heroku with free SSL.
+	◦	Effort: Activate Automated Certificate Management.
+	◦	Story Points: 1 (less than an hour)
+	•	Task 12.2: Verify Stripe tokenization works in production.
+	◦	Effort: Test a purchase to ensure card data isn’t stored locally.
+	◦	Story Points: 3 (few hours)
+	•	Total Points: 4
+
+Summary of Story Points by Category
+	•	Backend (BE):
+	◦	Story 1: 6
+	◦	Story 2: 11
+	◦	Story 3: 12
+	◦	Story 4: 8
+	◦	Story 5: 4
+	◦	Total: 41 points
+	•	Frontend (FE):
+	◦	Story 6: 4
+	◦	Story 7: 9
+	◦	Story 8: 8
+	◦	Total: 21 points
+	•	Infrastructure (Infra):
+	◦	Story 9: 11
+	◦	Story 10: 11
+	◦	Total: 22 points
+	•	Deployment:
+	◦	Story 11: 11
+	◦	Story 12: 4
+	◦	Total: 15 points
+	•	Grand Total: 99 points
+
+Notes on Estimation
+	•	Assumptions: Estimates assume a developer with moderate experience in the tech stack (Node.js, React, Postgres, Heroku). Newer developers might need more time (e.g., 5 → 8 points).
+	•	Dependencies: Some tasks depend on others (e.g., Task 2.3 needs 2.2), but I’ve kept them small and separable for sprint planning.
+	•	Timeline Fit: With 99 points and ~11 weeks (April 15 - July 1, 2025), a team could aim for ~9 points per week, achievable with 1-2 developers working part-time or 1 full-time.
+
+Next Steps
+	•	Sprint Planning: I can suggest a 2-week sprint breakdown (e.g., Sprint 1: FE basics + BE setup, ~18 points).
+	•	Refinement: Adjust points if you have a specific team size or skill level in mind.
+	•	Prioritization: Let me know if you want certain tasks (e.g., payment integration) done first.
+What would you like to do next? A sprint plan, point adjustments, or something else?
