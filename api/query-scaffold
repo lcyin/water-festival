@@ -1,0 +1,25 @@
+-- Task 1.1: Check Ticket Availability
+SELECT tt.name, COUNT(t.id) AS sold,
+       CASE tt.name 
+           WHEN 'Normal' THEN 150 
+           WHEN 'VIP' THEN 50 
+       END AS limit
+FROM ticket_types tt
+LEFT JOIN tickets t ON t.ticket_type_id = tt.id
+GROUP BY tt.id, tt.name;
+
+-- Task 2.3: Save Order and Tickets (Transaction Example)
+BEGIN;
+INSERT INTO orders (first_name, last_name, email, photo, total_amount, stripe_payment_id)
+VALUES ('John', 'Doe', 'john.doe@example.com', 'https://bucket.s3.region.amazonaws.com/photos/123.jpg', 70.00, 'pi_xxx');
+INSERT INTO tickets (order_id, ticket_type_id, qr_code)
+VALUES (currval('orders_id_seq'), 1, 'ticket-1-20250409123456'),
+       (currval('orders_id_seq'), 2, 'ticket-1-20250409123457');
+UPDATE orders SET payment_status = 'completed' WHERE id = currval('orders_id_seq');
+COMMIT;
+
+-- Task 5.1: Sales Export (Statistics)
+SELECT tt.name AS ticket_type, COUNT(t.id) AS sold, SUM(tt.price) AS revenue
+FROM ticket_types tt
+LEFT JOIN tickets t ON t.ticket_type_id = tt.id
+GROUP BY tt.id, tt.name;
