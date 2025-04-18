@@ -1,0 +1,14 @@
+project/
+├── src/
+│   ├── routes/
+│   │   ├── tickets.js      # /api/tickets/availability, /api/purchase
+│   │   ├── export.js       # /api/export
+│   ├── services/
+│   │   ├── payment.js      # Stripe logic
+│   │   ├── email.js        # Nodemailer/SendGrid
+│   │   ├── pdf.js          # PDFKit
+│   ├── db/
+│   │   ├── index.js        # PostgreSQL connection
+│   ├── app.js              # Express setup
+├── .env                    # Environment variables
+├── package.json
