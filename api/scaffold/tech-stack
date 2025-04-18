@@ -1,0 +1,11 @@
+Recommended Stack with Express:
+•  Database: pg or pg-promise for PostgreSQL queries (Tasks 1.1, 2.3, 4.1, 5.1).
+•  Payments: stripe SDK (Task 2.1).
+•  PDF Generation: pdfkit (Task 3.2).
+•  Email: nodemailer with @sendgrid/mail (Task 3.3).
+•  CSV Export: csv-writer (Task 5.2).
+•  Environment: dotenv for API keys.
+•  Security: helmet for HTTP headers, express-rate-limit for API protection.
+•  Testing: jest and supertest for endpoint testing (Task 4.2).
+•  Deployment: AWS EC2 with S3 for photo storage, Docker for consistency.
+Sample Project Structure:
