@@ -1,0 +1,46 @@
+1.  Create a Project Directory:
+mkdir ticket-sales-backend
+cd ticket-sales-backend
+
+2.  Initialize Node.js Project:
+npm init -y
+This creates a package.json file.
+
+3.  Install Core Dependencies: Install Express and essential libraries:
+npm install express pg dotenv helmet express-rate-limit
+•  express: Framework for API.
+	•  pg: PostgreSQL client.
+	•  dotenv: Environment variable management.
+	•  helmet: Security headers.
+	•  express-rate-limit: Rate limiting for API protection.
+
+4.  Create Project Structure:
+mkdir src src/routes src/services src/db
+touch src/app.js src/db/index.js src/routes/tickets.js .env .gitignore
+Structure:
+ticket-sales-backend/
+├── src/
+│   ├── db/
+│   │   └── index.js        # Database connection
+│   ├── routes/
+│   │   └── tickets.js      # Ticket-related endpoints
+│   ├── app.js              # Express setup
+├── .env                    # Environment variables
+├── .gitignore              # Git ignore file
+├── package.json
+
+5.  Set Up .gitignore:
+node_modules/
+.env
+*.log
+
+6.  Configure .env: Create a .env file with your credentials:
+DATABASE_URL=postgresql://user:password@localhost:5432/ticket_sales
+PORT=3000
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_S3_BUCKET=your_s3_bucket_name
+AWS_REGION=your_aws_region
+STRIPE_SECRET_KEY=your_stripe_secret_key
+SENDGRID_API_KEY=your_sendgrid_api_key
+Replace placeholders with your actual values.
