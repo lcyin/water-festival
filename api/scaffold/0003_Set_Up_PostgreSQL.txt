@@ -1,0 +1,115 @@
+Overview
+You’ll create a PostgreSQL database and apply the schema using five SQL files:
+1.  ticket_types.sql: Creates the ticket_types table.
+2.  orders.sql: Creates the orders table.
+3.  tickets.sql: Creates the tickets table.
+4.  insert_data.sql: Inserts initial data into ticket_types.
+5.  indexes.sql: Creates indexes for performance.
+These files will be stored in a sql directory within your project for organization.
+
+Instructions
+1.  Create the Database: Connect to PostgreSQL and create a database named ticket_sales:
+psql -U postgres
+CREATE DATABASE ticket_sales;
+\q
+•  Replace postgres with your PostgreSQL user if different.
+	•  If using a hosted service (e.g., AWS RDS), connect with the provided credentials and endpoint.
+
+2.  Create SQL Directory: In your project root (ticket-sales-backend), create a directory for SQL scripts:
+mkdir sql
+
+3.  Create SQL Files: Below are the contents of each file. Create them in the sql directory using a text editor or commands like touch and echo.
+	•  sql/ticket_types.sql:
+-- Create ticket_types table
+CREATE TABLE ticket_types (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    price DECIMAL(10, 2) NOT NULL CHECK (price >= 0)
+);
+
+•  Purpose: Defines ticket types (Normal, VIP) with prices (e.g., 20.00, 50.00).
+	•  sql/orders.sql:
+-- Create orders table
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$'),
+    photo VARCHAR(255),
+    total_amount DECIMAL(10, 2) NOT NULL CHECK (total_amount >= 0),
+    payment_status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (payment_status IN ('pending', 'completed', 'failed')),
+    stripe_payment_id VARCHAR(100) UNIQUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+•  Purpose: Stores order details, including attendee info and S3 photo paths.
+	•  sql/tickets.sql:
+
+-- Create tickets table
+CREATE TABLE tickets (
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    ticket_type_id INTEGER NOT NULL REFERENCES ticket_types(id),
+    qr_code VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+•  Purpose: Stores individual tickets with QR codes, linked to orders and ticket types.
+		•  Note: This table references orders and ticket_types, so they must be created first.
+	•  sql/insert_data.sql:
+
+-- Insert initial data into ticket_types
+INSERT INTO ticket_types (name, price) VALUES
+('Normal', 20.00),
+('VIP', 50.00);
+
+•  Purpose: Populates ticket_types with initial data (Normal and VIP tickets).
+	•  sql/indexes.sql:
+
+-- Create indexes for performance
+CREATE INDEX idx_tickets_order_id ON tickets(order_id);
+CREATE INDEX idx_tickets_ticket_type_id ON tickets(ticket_type_id);
+
+•  Purpose: Improves query performance for joins and filters (e.g., Tasks 1.1, 5.1).
+
+4.  Apply SQL Scripts: Apply the scripts in order, as tickets depends on orders and ticket_types, and indexes depend on tickets. Use psql:
+
+psql -U postgres -d ticket_sales -f sql/ticket_types.sql
+psql -U postgres -d ticket_sales -f sql/orders.sql
+psql -U postgres -d ticket_sales -f sql/tickets.sql
+psql -U postgres -d ticket_sales -f sql/insert_data.sql
+psql -U postgres -d ticket_sales -f sql/indexes.sql
+
+•  Order Matters:
+		•  ticket_types.sql and orders.sql first (no dependencies).
+		•  tickets.sql next (references orders and ticket_types).
+		•  insert_data.sql after ticket_types is created.
+		•  indexes.sql last (depends on tickets).
+	•  Alternative: Combine into a single command if preferred:
+
+cat sql/ticket_types.sql sql/orders.sql sql/tickets.sql sql/insert_data.sql sql/indexes.sql | psql -U postgres -d ticket_sales
+
+•  Verify: Check tables and data:
+
+psql -U postgres -d ticket_sales
+\dt
+SELECT * FROM ticket_types;
+\q
+
+5.  Update .gitignore: Ensure the sql directory is tracked, but exclude sensitive files:
+node_modules/
+.env
+*.log
+
+The database connection in src/db/index.js uses the DATABASE_URL from .env, pointing to the ticket_sales database:
+
+const { Pool } = require('pg');
+require('dotenv').config();
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+});
+
+module.exports = pool;
+
+
