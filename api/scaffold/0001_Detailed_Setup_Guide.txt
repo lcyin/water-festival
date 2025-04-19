@@ -1,0 +1,14 @@
+Detailed Setup Guide
+Prerequisites
+•  Node.js: Install Node.js (v18 or later) from nodejs.org. Verify with:
+node -v
+npm -v
+
+•  PostgreSQL: Install PostgreSQL (v14 or later) locally or use a hosted service (e.g., AWS RDS, Neon). Verify with:
+psql --version
+
+•  AWS S3: Ensure you have an S3 bucket for photo storage and AWS credentials (Access Key ID, Secret Access Key).
+•  SendGrid Account: For email sending (Task 3.3), sign up at sendgrid.com and get an API key.
+•  Stripe Account: For payments (Task 2.1), sign up at stripe.com and get test API keys.
+•  Code Editor: Use VS Code or any editor.
+•  Git: Optional for version control.
